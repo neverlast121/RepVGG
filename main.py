@@ -74,13 +74,13 @@ def parse_option():
 
 def main(config):
     dataset_train, dataset_val, data_loader_train, data_loader_val, mixup_fn = build_loader(config)
-
+    logger.info(f"data len:{len(data_loader_train)}")
     logger.info(f"Creating model:{config.MODEL.ARCH}")
 
     model = create_RepVGGplus_by_name(config.MODEL.ARCH, deploy=False, use_checkpoint=args.use_checkpoint)
     optimizer = build_optimizer(config, model)
 
-    logger.info(str(model))
+    # logger.info(str(model))
     model.cuda()
 
     if torch.cuda.device_count() > 1:
