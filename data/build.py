@@ -82,8 +82,9 @@ def build_loader(config):
     logger.info(f"local rank {config.LOCAL_RANK} / global rank {dist.get_rank()} successfully build val dataset")
 
     num_tasks = dist.get_world_size()
-
+    logger.info(f"num task:{num_tasks}")
     global_rank = dist.get_rank()
+    logger.info(f"global rank:{global_rank}")
     if config.DATA.ZIP_MODE and config.DATA.CACHE_MODE == 'part':
         indices = np.arange(dist.get_rank(), len(dataset_train), dist.get_world_size())
         sampler_train = SubsetRandomSampler(indices)
@@ -91,12 +92,14 @@ def build_loader(config):
         sampler_train = torch.utils.data.DistributedSampler(
             dataset_train, num_replicas=num_tasks, rank=global_rank, shuffle=True
         )
-
+        logger.info(f"sampler:{sampler_train}")
     if dataset_val is None:
         sampler_val = None
     else:
         indices = np.arange(dist.get_rank(), len(dataset_val), dist.get_world_size())   #TODO
+        logger.info(f"indices:{indices}")
         sampler_val = SubsetRandomSampler(indices)
+        logger.info(f"sampler val:{sampler_val}")
 
     data_loader_train = torch.utils.data.DataLoader(
         dataset_train, sampler=sampler_train,
@@ -117,7 +120,7 @@ def build_loader(config):
             pin_memory=config.DATA.PIN_MEMORY,
             drop_last=False
         )
-
+        logger.info(f"data_loader val:{len(data_loader_val)}")
     # setup mixup / cutmix
     mixup_fn = None
     mixup_active = config.AUG.MIXUP > 0 or config.AUG.CUTMIX > 0. or config.AUG.CUTMIX_MINMAX is not None
