@@ -170,9 +170,9 @@ def build_dataset(is_train, config):
                                     std=std),
                 ])
         if is_train:
-            for data_dir in  os.listdir(config.DATA.DATAPATH):
+            for data_dir in  os.listdir(config.DATA.DATA_PATH):
                 if data_dir == 'train':
-                    train_path = os.path.join(config.DATA.DATAPATH, data_dir)
+                    train_path = os.path.join(config.DATA.DATA_PATH, data_dir)
                     dir_list = []
                     for dir in os.listdir(valid_path):
                         if dir == 'images':
