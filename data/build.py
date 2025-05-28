@@ -187,13 +187,14 @@ def build_dataset(is_train, config):
             for data_dir in  os.listdir(config.DATA.DATA_PATH):
                 if data_dir == 'valid':
                     valid_path = os.path.join(config.DATA.DATA_PATH, data_dir)
+                    print(valid_path)
                     dir_list = []
                     for dir in os.listdir(valid_path):
                         if dir == 'images':
-                            dir_list.append(os.path.join(valid_path,dir))
+                            dir_list.append(os.path.join(valid_path, dir))
                         if dir == 'labels':
                             dir_list.append(os.path.join(valid_path, dir))
-
+                    print(dir_list)
                     dataset = CustomDataset(image_dir=dir_list[0],
                                             label_dir=dir_list[1],
                                             transform=transform)
