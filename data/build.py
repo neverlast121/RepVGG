@@ -197,7 +197,7 @@ def build_dataset(is_train, config):
                                     transform=transform)
 
 
-            nb_classes = 8
+        nb_classes = 8
     else:
         raise NotImplementedError("We only support ImageNet and CIFAR-100 now.")
 
