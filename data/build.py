@@ -17,6 +17,58 @@ except:
     from timm.data.transforms import _pil_interp
 from .cached_image_folder import CachedImageFolder
 from .samplers import SubsetRandomSampler
+import os 
+from PIL import Image
+from torch.utils.data import Dataset
+
+
+
+class CustomDataset(Dataset):
+    """this data set accept the data in yolo format"""
+    def __init__(self, image_dir, label_dir, transform=None):
+        self.image_dir = image_dir
+        self.label_dir = label_dir
+        self.transform = transform
+        self.image_filenames = [f for f in os.listdir(image_dir) if f.endswith('.jpg') or f.endswith('.png')]
+
+    def __len__(self):
+        return len(self.image_filenames)
+
+    def __getitem__(self, idx):
+        image_filename = self.image_filenames[idx]
+        image_path = os.path.join(self.image_dir, image_filename)
+        label_path = os.path.join(self.label_dir, os.path.splitext(image_filename)[0] + '.txt')
+
+        # Load image
+        image = Image.open(image_path).convert('RGB')
+        width, height = image.size
+
+        # Load and parse label
+        with open(label_path, 'r') as f:
+            line = f.readline().strip()
+            class_id, cx, cy, bw, bh = map(float, line.split())
+            class_id = int(class_id)
+
+        # Convert normalized bbox to pixel coordinates
+        cx *= width
+        cy *= height
+        bw *= width
+        bh *= height
+
+        x1 = int(cx - bw / 2)
+        y1 = int(cy - bh / 2)
+        x2 = int(cx + bw / 2)
+        y2 = int(cy + bh / 2)
+
+        # Crop face
+        img = image.crop((x1, y1, x2, y2))
+
+        if self.transform:
+            img = self.transform(img)
+
+        return img, class_id
+
+
 
 
 def build_loader(config):
@@ -107,7 +159,47 @@ def build_dataset(is_train, config):
                  transforms.Normalize(mean, std)])
             dataset = datasets.CIFAR100(root=config.DATA.DATA_PATH, train=False, download=True, transform=transform)
         nb_classes = 100
+    elif config.DATA.DATASET == 'custom':
+        mean=[0.485, 0.456, 0.406]
+        std=[0.229, 0.224, 0.225]
+        transform = transform = transforms.Compose([
+                transforms.Resize(256),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(mean=mean,
+                                    std=std),
+                ])
+        if is_train:
+            for data_dir in  os.listdir(config.DATA.DATAPATH):
+                if data_dir == 'train':
+                    train_path = os.path.join(config.DATA.DATAPATH, data_dir)
+                    dir_list = []
+                    for dir in os.listdir(valid_path):
+                        if dir == 'images':
+                            dir_list.append(os.path.join(train_path,dir))
+                        if dir == 'labels':
+                            dir_list.append(os.path.join(train_path, dir))
 
+                    dataset = CustomDataset(image_dir=dir_list[0],
+                                            label_dir=dir_list[1],
+                                            transform=transform)
+        else:
+            for data_dir in  os.listdir(config.DATA.DATAPATH):
+                if data_dir == 'valid':
+                    valid_path = os.path.join(config.DATA.DATAPATH, data_dir)
+                    dir_list = []
+                    for dir in os.listdir(valid_path):
+                        if dir == 'images':
+                            dir_list.append(os.path.join(valid_path,dir))
+                        if dir == 'labels':
+                            dir_list.append(os.path.join(valid_path, dir))
+
+                    dataset = CustomDataset(image_dir=dir_list[0],
+                                            label_dir=dir_list[1],
+                                            transform=transform)
+
+
+            nb_classes = 8
     else:
         raise NotImplementedError("We only support ImageNet and CIFAR-100 now.")
 
