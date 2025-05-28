@@ -5,12 +5,14 @@
 # --------------------------------------------------------
 import argparse
 import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import torch
 import torch.nn.parallel
 import torch.optim
 import torch.utils.data
 import torch.utils.data.distributed
-from repvggplus import create_RepVGGplus_by_name, repvgg_model_convert
+from repvgg import create_RepVGG_A0, repvgg_model_convert
 
 parser = argparse.ArgumentParser(description='RepVGG(plus) Conversion')
 parser.add_argument('load', metavar='LOAD', help='path to the weights file')
@@ -20,11 +22,11 @@ parser.add_argument('-a', '--arch', metavar='ARCH', default='RepVGG-A0')
 def convert():
     args = parser.parse_args()
 
-    train_model = create_RepVGGplus_by_name(args.arch, deploy=False)
+    train_model = create_RepVGG_A0(deploy=False, use_checkpoint= args.load)
 
     if os.path.isfile(args.load):
         print("=> loading checkpoint '{}'".format(args.load))
-        checkpoint = torch.load(args.load)
+        checkpoint = torch.load(args.load, map_location=torch.device('cpu'), weights_only=False)
         if 'state_dict' in checkpoint:
             checkpoint = checkpoint['state_dict']
         elif 'model' in checkpoint:

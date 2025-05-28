@@ -167,11 +167,11 @@ def build_dataset(is_train, config):
             dataset = datasets.CIFAR100(root=config.DATA.DATA_PATH, train=False, download=True, transform=transform)
         nb_classes = 100
     elif config.DATA.DATASET == 'custom':
-        mean=[0.485, 0.456, 0.406]
-        std=[0.229, 0.224, 0.225]
+        mean=[0.5441, 0.4334, 0.3817]
+        std=[0.2558, 0.2304, 0.2223]
         transform = transform = transforms.Compose([
-                transforms.Resize(256),
-                transforms.CenterCrop(224),
+                transforms.Resize(96),
+                transforms.CenterCrop(96),
                 transforms.ToTensor(),
                 transforms.Normalize(mean=mean,
                                     std=std),

@@ -1,2 +1,5 @@
 .idea/
 *nori*
+/__pycache__
+*.pt
+*.pth
