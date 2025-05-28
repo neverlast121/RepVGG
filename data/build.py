@@ -134,6 +134,7 @@ def build_loader(config):
 
 
 def build_dataset(is_train, config):
+    logger = create_logger(output_dir=config.OUTPUT, dist_rank=0 if torch.cuda.device_count() == 1 else dist.get_rank(), name=f"{config.MODEL.ARCH}")
     if config.DATA.DATASET == 'imagenet':
         transform = build_transform(is_train, config)
         prefix = 'train' if is_train else 'val'
@@ -187,6 +188,7 @@ def build_dataset(is_train, config):
             dataset = CustomDataset(image_dir=dir_list[0],
                                     label_dir=dir_list[1],
                                     transform=transform)
+            logger.info(f"train data len:{len(dataset)}")
         else:
             
             valid_path = os.path.join(config.DATA.DATA_PATH, 'valid')
@@ -201,7 +203,7 @@ def build_dataset(is_train, config):
             dataset = CustomDataset(image_dir=dir_list[0],
                                     label_dir=dir_list[1],
                                     transform=transform)
-
+            logger.info(f"vald data len:{len(dataset)}")
 
         nb_classes = 8
     else:
