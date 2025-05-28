@@ -185,8 +185,8 @@ def build_dataset(is_train, config):
                 if dir == 'labels':
                     dir_list.append(os.path.join(train_path, dir))
 
-            dataset = CustomDataset(image_dir=dir_list[0],
-                                    label_dir=dir_list[1],
+            dataset = CustomDataset(image_dir=dir_list[1],
+                                    label_dir=dir_list[0],
                                     transform=transform)
             logger.info(f"train data len:{len(dataset)}")
         else:
@@ -200,8 +200,8 @@ def build_dataset(is_train, config):
                 if dir == 'labels':
                     dir_list.append(os.path.join(valid_path, dir))
             
-            dataset = CustomDataset(image_dir=dir_list[0],
-                                    label_dir=dir_list[1],
+            dataset = CustomDataset(image_dir=dir_list[1],
+                                    label_dir=dir_list[0],
                                     transform=transform)
             logger.info(f"vald data len:{len(dataset)}")
 
