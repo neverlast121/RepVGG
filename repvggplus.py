@@ -243,7 +243,7 @@ class RepVGGplus(nn.Module):
 #   Not sure whether it slows down inference
 #   pse for "post SE", which means using SE block after ReLU
 def create_RepVGGplus_L2pse(deploy=False, use_checkpoint=False):
-    return RepVGGplus(num_blocks=[8, 14, 24, 1], num_classes=1000,
+    return RepVGGplus(num_blocks=[8, 14, 24, 1], num_classes=8,
                   width_multiplier=[2.5, 2.5, 2.5, 5], deploy=deploy, use_post_se=True,
                       use_checkpoint=use_checkpoint)
 
