@@ -185,10 +185,7 @@ def main(config):
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
     logger.info('Training time {}'.format(total_time_str))
-    import torch.distributed as dist
 
-    if dist.is_initialized():
-        dist.destroy_process_group()
 
 
 
@@ -416,5 +413,8 @@ if __name__ == '__main__':
 
     # print config
     logger.info(config.dump())
-
-    main(config)
+    try:
+        main(config)
+    finally:
+        if dist.is_initialized():
+            dist.destroy_process_group()
