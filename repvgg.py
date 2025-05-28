@@ -197,7 +197,7 @@ g2_map = {l: 2 for l in optional_groupwise_layers}
 g4_map = {l: 4 for l in optional_groupwise_layers}
 
 def create_RepVGG_A0(deploy=False, use_checkpoint=False):
-    return RepVGG(num_blocks=[2, 4, 14, 1], num_classes=8,
+    return RepVGG(num_blocks=[2, 4, 14, 1], num_classes=1000,
                   width_multiplier=[0.75, 0.75, 0.75, 2.5], override_groups_map=None, deploy=deploy, use_checkpoint=use_checkpoint)
 
 def create_RepVGG_A1(deploy=False, use_checkpoint=False):
