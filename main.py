@@ -64,7 +64,6 @@ def parse_option():
     parser.add_argument("--local_rank", type=int, default=0, help='local rank for DistributedDataParallel')
 
     args, unparsed = parser.parse_known_args()
-
     config = get_config(args)
 
     return args, config

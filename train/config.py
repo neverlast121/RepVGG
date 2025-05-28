@@ -7,6 +7,7 @@
 
 import os
 import yaml
+import torch
 from yacs.config import CfgNode as CN
 
 _C = CN()
@@ -202,6 +203,7 @@ def update_config(config, args):
         config.DATA.TEST_BATCH_SIZE = config.DATA.BATCH_SIZE
     # set local rank for distributed training
     config.LOCAL_RANK = args.local_rank
+    torch.cuda.set_device(config.LOCAL_RANK)
     # output folder
     config.OUTPUT = os.path.join(config.OUTPUT, config.MODEL.ARCH, config.TAG)
     config.freeze()
