@@ -203,6 +203,11 @@ def update_config(config, args):
         config.DATA.TEST_BATCH_SIZE = config.DATA.BATCH_SIZE
     # set local rank for distributed training
     # config.LOCAL_RANK = args.local_rank
+    local_rank_env = os.environ.get("LOCAL_RANK")
+    if local_rank_env is not None:
+        config.LOCAL_RANK = int(local_rank_env)
+    else:
+        config.LOCAL_RANK = args.local_rank
 
     # output folder
     config.OUTPUT = os.path.join(config.OUTPUT, config.MODEL.ARCH, config.TAG)
@@ -216,10 +221,6 @@ def get_config(args):
     config = _C.clone()
     update_config(config, args)
 
-    local_rank_env = os.environ.get("LOCAL_RANK")
-    if local_rank_env is not None:
-        config.LOCAL_RANK = int(local_rank_env)
-    else:
-        config.LOCAL_RANK = args.local_rank
+    
 
     return config
