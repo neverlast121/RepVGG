@@ -19,6 +19,7 @@ from train.lr_scheduler import build_scheduler
 from train.logger import create_logger
 from utils import load_checkpoint, save_checkpoint, get_grad_norm, auto_resume_helper, reduce_tensor, save_latest, update_model_ema, unwrap_model
 import copy
+from utils import load_weights
 from train.optimizer import build_optimizer
 from repvggplus import create_RepVGGplus_by_name
 

@@ -150,7 +150,7 @@ def load_checkpoint(config, model, optimizer, lr_scheduler, logger, model_ema=No
 
 
 def load_weights(model, path):
-    checkpoint = torch.load(path, map_location='cpu')
+    checkpoint = torch.load(path, map_location='cpu', weights_only=False)
     if 'model' in checkpoint:
         checkpoint = checkpoint['model']
     if 'state_dict' in checkpoint:
