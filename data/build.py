@@ -11,6 +11,7 @@ from torchvision import datasets, transforms
 from timm.data.constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from timm.data import Mixup
 from timm.data import create_transform
+from train.logger import create_logger
 try:
     from timm.data.transforms import str_to_pil_interp as _pil_interp
 except:
@@ -72,14 +73,16 @@ class CustomDataset(Dataset):
 
 
 def build_loader(config):
+    logger = create_logger(output_dir=config.OUTPUT, dist_rank=0 if torch.cuda.device_count() == 1 else dist.get_rank(), name=f"{config.MODEL.ARCH}")
     config.defrost()
     dataset_train, config.MODEL.NUM_CLASSES = build_dataset(is_train=True, config=config)
     config.freeze()
-    print(f"local rank {config.LOCAL_RANK} / global rank {dist.get_rank()} successfully build train dataset")
+    logger.info(f"local rank {config.LOCAL_RANK} / global rank {dist.get_rank()} successfully build train dataset")
     dataset_val, _ = build_dataset(is_train=False, config=config)
-    print(f"local rank {config.LOCAL_RANK} / global rank {dist.get_rank()} successfully build val dataset")
+    logger.info(f"local rank {config.LOCAL_RANK} / global rank {dist.get_rank()} successfully build val dataset")
 
     num_tasks = dist.get_world_size()
+
     global_rank = dist.get_rank()
     if config.DATA.ZIP_MODE and config.DATA.CACHE_MODE == 'part':
         indices = np.arange(dist.get_rank(), len(dataset_train), dist.get_world_size())

@@ -22,10 +22,10 @@ _C.DATA = CN()
 # Batch size for a single GPU, could be overwritten by command line argument
 _C.DATA.BATCH_SIZE = 128
 # Path to dataset, could be overwritten by command line argument
-_C.DATA.DATA_PATH = '/your/path/to/dataset'
+_C.DATA.DATA_PATH = '/kaggle/input/affectnet-yolo-format/YOLO_format'
 
 # Dataset name
-_C.DATA.DATASET = 'imagenet'
+_C.DATA.DATASET = 'custom'
 # Input image size
 _C.DATA.IMG_SIZE = 224
 _C.DATA.TEST_SIZE = None
